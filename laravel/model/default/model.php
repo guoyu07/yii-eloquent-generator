@@ -15,9 +15,9 @@
 echo "<?php\n";
 ?>
 
+<?php if ($generator->ns) : ?>
 namespace <?= $generator->ns ?>;
-
-use Yii;
+<?php endif; ?>
 
 /**
  * This is the model class for table "<?= $tableName ?>".
@@ -28,57 +28,101 @@ use Yii;
 <?php if (!empty($relations)): ?>
  *
 <?php foreach ($relations as $name => $relation): ?>
- * @property <?= $relation[1] . ($relation[2] ? '[]' : '') . ' $' . lcfirst($name) . "\n" ?>
+ * @property <?= $relation['class'] . ' $' . lcfirst($name) . ($relation['hasMany'] ? '[]' : '') . "\n" ?>
 <?php endforeach; ?>
 <?php endif; ?>
  */
 class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass, '\\') . "\n" ?>
 {
-    /**
-     * @inheritdoc
-     */
-    public static function tableName()
-    {
-        return '<?= $generator->generateTableName($tableName) ?>';
-    }
-<?php if ($generator->db !== 'db'): ?>
 
-    /**
-     * @return \yii\db\Connection the database connection used by this AR class.
-     */
-    public static function getDb()
-    {
-        return Yii::$app->get('<?= $generator->db ?>');
-    }
+<?php if (isset($tableSchema->columns['deleted_at'])) : ?>
+    use SoftDeletingTrait;
 <?php endif; ?>
 
     /**
-     * @inheritdoc
-     */
-    public function rules()
-    {
-        return [<?= "\n            " . implode(",\n            ", $rules) . "\n        " ?>];
-    }
+    * The database connection used by the model.
+    *
+    * @var string
+    */
+    //protected $connection = '<?= $generator->db ?>';
 
     /**
-     * @inheritdoc
-     */
-    public function attributeLabels()
-    {
-        return [
-<?php foreach ($labels as $name => $label): ?>
-            <?= "'$name' => " . $generator->generateString($label) . ",\n" ?>
-<?php endforeach; ?>
-        ];
+    * The database table used by the model.
+    *
+    * @var string
+    */
+    protected $table = '<?= $generator->generateTableName($tableName) ?>';
+
+    <?php
+    $fillable = array();
+    $guarded = array();
+    foreach ($tableSchema->columns as $column) {
+        if (!$column->autoIncrement) {
+            $fillable[] = "'".$column->name."'";
+        } else {
+            $guarded[] = "'".$column->name."'";
+        }
     }
+    ?>
+
+    /**
+    * Fields that are allowed to be mass assigned
+    *
+    * @var string
+    */
+    protected $fillable = [<?=implode(', ', $fillable)?>];
+
+    /**
+    * Fields that are NOT allowed to be mass assigned
+    *
+    * @var string
+    */
+    protected $guarded = [<?=implode(', ', $guarded)?>];
+
+    /**
+     * Rules to be used with validator
+     *
+     * @var array
+     */
+    public $rules = [
+<?php foreach ($rules as $ruleColumn => $rule) { echo "        '$ruleColumn' => '$rule',\n"; } ?>
+    ];
+
+    /**
+     * Rules used in different cases
+     *
+     * @var array
+     */
+    public $rulesets = [
+        'creating' => [
+        ],
+        'updating' => [
+        ],
+        'deleting' => [
+        ],
+        'saving' => [
+        ]
+    ];
+
+    /**
+     * List of human readable attribute names for use with a validator.
+     *
+     * @var array
+     */
+    public $attributeNames = [
+<?php foreach ($labels as $name => $label): ?>
+        <?= "'$name' => " . $generator->generateString($generator->enableI18N?$name:$label) . ",\n" ?>
+<?php endforeach; ?>
+    ];
+
 <?php foreach ($relations as $name => $relation): ?>
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return <?= $name ?>
      */
-    public function get<?= $name ?>()
+    public function <?= $name ?>()
     {
-        <?= $relation[0] . "\n" ?>
+        <?= $relation['relation'] . "\n" ?>
     }
 <?php endforeach; ?>
 }
