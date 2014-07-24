@@ -109,7 +109,7 @@ class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass, '\\') . 
      *
      * @var array
      */
-    public $attributeNames = [
+    public $validationAttributeNames = [
 <?php foreach ($labels as $name => $label): ?>
         <?= "'$name' => " . $generator->generateString($generator->enableI18N?$name:$label) . ",\n" ?>
 <?php endforeach; ?>
