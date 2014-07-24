@@ -1,12 +1,40 @@
-Yii 2 Basic Application Template
+Eloquent Model Generator
 ================================
 
-Yii 2 Basic Application Template is a skeleton Yii 2 application best for
-rapidly creating small projects.
+Generate Eloquent models with relationships, validation rules, and labels all generated from a live db.
 
-The template contains the basic features including user login/logout and a contact page.
-It includes all commonly used configurations that would allow you to focus on adding new
-features to your application.
+Configuration
+-------------
+Make sure to add your database connections to:
+config/web.php
+
+Example:
+
+```
+#!php
+$config = [
+    //...
+    'components' => [
+        //...
+        'homestead' => [
+            'class' => 'yii\db\Connection',
+            'dsn' => 'mysql:host=localhost;port=3306;dbname=homestead',
+            'username' => 'homestead',
+            'password' => 'secret',
+            'charset' => 'utf8',
+        ],
+    //...
+];
+
+```
+
+Then set a server to point to /web as root.
+
+Using
+-----
+Go to /index.php?r=gii
+Click "Start" under Eloquent model generator.  Then follow the instructions from there.
+
 
 
 DIRECTORY STRUCTURE
