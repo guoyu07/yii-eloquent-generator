@@ -17,8 +17,8 @@ echo "<?php\n";
 
 <?php if ($generator->ns) : ?>
 namespace <?= $generator->ns ?>;
-<?php endif; ?>
 
+<?php endif; ?>
 /**
  * This is the model class for table "<?= $tableName ?>".
  *
@@ -32,9 +32,8 @@ namespace <?= $generator->ns ?>;
 <?php endforeach; ?>
 <?php endif; ?>
  */
-class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass, '\\') . "\n" ?>
+class <?= $className ?> extends <?= '' . ltrim($generator->baseClass, '\\') . "\n" ?>
 {
-
 <?php if (isset($tableSchema->columns['deleted_at'])) : ?>
     use SoftDeletingTrait;
 <?php endif; ?>
@@ -57,14 +56,13 @@ class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass, '\\') . 
     $fillable = array();
     $guarded = array();
     foreach ($tableSchema->columns as $column) {
-        if (!$column->autoIncrement) {
+        if (!$column->autoIncrement && !in_array($column->name, ['created_at','updated_at','deleted_at'])) {
             $fillable[] = "'".$column->name."'";
         } else {
             $guarded[] = "'".$column->name."'";
         }
     }
     ?>
-
     /**
     * Fields that are allowed to be mass assigned
     *
@@ -78,6 +76,13 @@ class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass, '\\') . 
     * @var string
     */
     protected $guarded = [<?=implode(', ', $guarded)?>];
+
+    /**
+    * The attributes excluded from the model's JSON form.
+    *
+    * @var array
+    */
+    protected $hidden = array();
 
     /**
      * Rules to be used with validator
@@ -115,14 +120,22 @@ class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass, '\\') . 
 <?php endforeach; ?>
     ];
 
-<?php foreach ($relations as $name => $relation): ?>
-
     /**
-     * @return <?= $name ?>
+    * Initalizing method to attach observers
+    */
+    public static function boot() {
+        parent::boot();
+    }
+
+<?php foreach ($relations as $name => $relation): ?>
+    /**
+     *
+     * @return <?= $name."\n" ?>
      */
-    public function <?= $name ?>()
+    public function <?= lcfirst($name) ?>()
     {
         <?= $relation['relation'] . "\n" ?>
     }
+
 <?php endforeach; ?>
 }
