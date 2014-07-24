@@ -37,18 +37,52 @@ $config = [
                 ],
             ],
         ],
-        'db' => require(__DIR__ . '/db.php'),
+        'homestead' => [
+            'class' => 'yii\db\Connection',
+            'dsn' => 'mysql:host=localhost;port=3306;dbname=homestead',
+            'username' => 'homestead',
+            'password' => 'secret',
+            'charset' => 'utf8',
+        ],
+        'homestead_local' => [
+            'class' => 'yii\db\Connection',
+            'dsn' => 'mysql:host=localhost;port=33060;dbname=homestead',
+            'username' => 'homestead',
+            'password' => 'secret',
+            'charset' => 'utf8',
+        ],
     ],
     'params' => $params,
 ];
 
+
+
 //if (YII_ENV_DEV) {
     // configuration adjustments for 'dev' environment
-    $config['bootstrap'][] = 'debug';
-    $config['modules']['debug'] = 'yii\debug\Module';
+    $config = array_merge_recursive($config, [
+        'bootstrap' => ['debug'],
+        'modules' => [
+            'debug' => 'yii\debug\Module',
+        ]
+    ]);
 
-    $config['bootstrap'][] = 'gii';
-    $config['modules']['gii'] = 'yii\gii\Module';
+    $config = array_merge_recursive($config, [
+        'bootstrap' => ['gii'],
+        'modules' => [
+            'gii' => [
+                'class' => 'yii\gii\Module',
+                'allowedIPs' => ['*'] ,
+                'generators' => [
+                    'laravelModel' => [
+                        'class' => 'app\laravel\model\Generator',
+                        'templates' => [
+                            'my' => '@app/laravel/model/default',
+                        ],
+                    ],
+                ],
+            ]
+        ]
+    ]);
 //}
 
 return $config;
