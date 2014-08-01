@@ -19,6 +19,10 @@ echo "<?php\n";
 namespace <?= $generator->ns ?>;
 
 <?php endif; ?>
+<?php if (isset($tableSchema->columns['deleted_at'])) : ?>
+use Illuminate\Database\Eloquent\SoftDeletingTrait;
+
+<?php endif; ?>
 /**
  * This is the model class for table "<?= $tableName ?>".
  *
@@ -52,7 +56,16 @@ class <?= $className ?> extends <?= '' . ltrim($generator->baseClass, '\\') . "\
     */
     protected $table = '<?= $generator->generateTableName($tableName) ?>';
 
-    <?php
+<?php if (!isset($tableSchema->columns['created_at']) || !isset($tableSchema->columns['updated_at'])) : ?>
+    /**
+    * If the model needs timestamp created_at and updated_at filled
+    *
+    * @var string
+    */
+    protected $timestamps = false;
+
+<?php endif; ?>
+<?php
     $fillable = array();
     $guarded = array();
     foreach ($tableSchema->columns as $column) {
@@ -130,7 +143,7 @@ class <?= $className ?> extends <?= '' . ltrim($generator->baseClass, '\\') . "\
 <?php foreach ($relations as $name => $relation): ?>
     /**
      *
-     * @return <?= $name."\n" ?>
+     * @return <?= $relation['class']."\n" ?>
      */
     public function <?= lcfirst($name) ?>()
     {
