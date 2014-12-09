@@ -6,6 +6,7 @@ $config = [
     'id' => 'basic',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
+    'defaultRoute' => "gii",
     'components' => [
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
@@ -37,9 +38,16 @@ $config = [
                 ],
             ],
         ],
-        'homestead' => [
+        'dtp' => [
             'class' => 'yii\db\Connection',
-            'dsn' => 'mysql:host=localhost;port=3306;dbname=homestead',
+            'dsn' => 'mysql:host=localhost;port=3306;dbname=dtp-msa',
+            'username' => 'homestead',
+            'password' => 'secret',
+            'charset' => 'utf8',
+        ],
+        'repsentry' => [
+            'class' => 'yii\db\Connection',
+            'dsn' => 'mysql:host=localhost;port=33060;dbname=repsentry',
             'username' => 'homestead',
             'password' => 'secret',
             'charset' => 'utf8',
@@ -51,6 +59,39 @@ $config = [
             'password' => 'secret',
             'charset' => 'utf8',
         ],
+        'urlManager' => [
+            'enablePrettyUrl' => true,
+            'showScriptName' => false,
+            'rules' => [
+                'giiRoute' => ['pattern'=>'/', 'route'=>'gii/default/view', 'defaults' => ['id'=>'laravelModel'] ],
+//                'gii/<id:\w+>' => 'gii/default/view',
+//                'gii/<controller:\w+>/<action:\w+>' => 'gii/<controller>/<action>',
+
+            ]
+        ],
+        'assetManager' => [
+            'bundles' => [
+//                'yii\bootstrap\BootstrapAsset' => [
+//                    'css' => [],
+//                ],
+//                'yii\bootstrap\BootstrapAsset' => [
+//                    'sourcePath' => 'css/',
+//                    'css' => ['gii.css'],
+//
+//                ],
+//                'yii\bootstrap\BootstrapAsset' => [
+//                    'basePath' => '@webroot',
+//                    'baseUrl' => '@web',
+//                    'css' => ['css/gii.css']
+//                ],
+                'yii\web\YiiAsset' => [
+                    'css' => ['/css/gii.css']
+                ],
+                'yii\gii\GiiAsset' => [
+                    'css' => ['/css/gii.css']
+                ],
+            ]
+        ]
     ],
     'params' => $params,
 ];
@@ -71,6 +112,19 @@ $config = [
         'modules' => [
             'gii' => [
                 'class' => 'yii\gii\Module',
+//                'components' => [
+//                    'assetManager' => [
+//                        'class' => 'yii\web\AssetManager',
+//                        'bundles' => [
+//                            'yii\web\YiiAsset' => [
+//                                'css' => ['/css/gii.css']
+//                            ],
+//                            'yii\gii\GiiAsset' => [
+//                                'css' => ['/css/gii.css']
+//                            ],
+//                        ]
+//                    ]
+//                ],
                 'allowedIPs' => ['*'] ,
                 'generators' => [
                     'laravelModel' => [

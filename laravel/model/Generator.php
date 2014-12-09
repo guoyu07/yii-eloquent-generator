@@ -336,6 +336,7 @@ class Generator extends \yii\gii\Generator
             $schemaName = '';
         }
 
+        $namespace = ($this->ns) ? $this->ns . "\\" : "";
         $relations = [];
         foreach ($db->getSchema()->getTableSchemas($schemaName) as $table) {
             $tableName = $table->name;
@@ -358,7 +359,7 @@ class Generator extends \yii\gii\Generator
                 }
                 $relationName = $this->generateRelationName($relations, $className, $table, $relationNameKey, false);
                 $relations[$className][$relationName] = [
-                    'relation' => "return \$this->belongsTo('$refClassName', '$relation_key_local', '$relation_key_foreign_parent' );",
+                    'relation' => "return \$this->belongsTo('$namespace$refClassName', '$relation_key_local', '$relation_key_foreign_parent' );",
                     //'relation' => "return \$this->hasOne('$refClassName', '$relation_foreign_parent', '$relation_key_local' );",
                     'class' => $refClassName,
                     'hasMany' => false,
@@ -380,7 +381,7 @@ class Generator extends \yii\gii\Generator
                 $link = $this->generateRelationLink($refs);
                 $relationName = $this->generateRelationName($relations, $refClassName, $refTable, $className, $hasMany);
                 $relations[$refClassName][$relationName] = [
-                    'relation' => "return \$this->" . ($hasMany ? 'hasMany' : 'hasOne') . "('$className', '".key($refs)."', '".current($refs)."' );",
+                    'relation' => "return \$this->" . ($hasMany ? 'hasMany' : 'hasOne') . "('$namespace$className', '".key($refs)."', '".current($refs)."' );",
                     'class' => $className,
                     'hasMany' => $hasMany,
                     'type' => $hasMany ? 'hasMany' : 'hasOne'
@@ -406,7 +407,7 @@ class Generator extends \yii\gii\Generator
             $viaLink = $this->generateRelationLink([$fk0 => $fks[$fk0][1]]);
             $relationName = $this->generateRelationName($relations, $className0, $db->getTableSchema($table0), $fk1, true);
             $relations[$className0][$relationName] = [
-                'relation' => "return \$this->belongsToMany('$className1', '$table->name', '{$fk0}', '{$fk1}');",
+                'relation' => "return \$this->belongsToMany('$namespace$className1', '$table->name', '{$fk0}', '{$fk1}');",
                 'class' => $className1,
                 'hasMany' => true,
                 'type' => 'belongsToMany'
@@ -416,7 +417,7 @@ class Generator extends \yii\gii\Generator
             $viaLink = $this->generateRelationLink([$fk1 => $fks[$fk1][1]]);
             $relationName = $this->generateRelationName($relations, $className1, $db->getTableSchema($table1), $fk0, true);
             $relations[$className1][$relationName] = [
-                'relation' => "return \$this->belongsToMany('$className0', '$table->name', '{$fk1}', '{$fk0}');",
+                'relation' => "return \$this->belongsToMany('$namespace$className0', '$table->name', '{$fk1}', '{$fk0}');",
                 'class' => $className0,
                 'hasMany' => true,
                 'type' => 'belongsToMany'

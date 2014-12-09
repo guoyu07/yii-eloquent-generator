@@ -62,7 +62,7 @@ class <?= $className ?> extends <?= '' . ltrim($generator->baseClass, '\\') . "\
     *
     * @var string
     */
-    protected $timestamps = false;
+    public $timestamps = false;
 
 <?php endif; ?>
 <?php
@@ -96,15 +96,17 @@ class <?= $className ?> extends <?= '' . ltrim($generator->baseClass, '\\') . "\
     * @var array
     */
     protected $hidden = array();
-
-    /**
-     * Rules to be used with validator
-     *
-     * @var array
-     */
+<?php
+/**
+ * Rules to be used with validator
+ *
+ * @var array
+ */
+/*
     public $rules = [
-<?php foreach ($rules as $ruleColumn => $rule) { echo "        '$ruleColumn' => '$rule',\n"; } ?>
+<? php //foreach ($rules as $ruleColumn => $rule) { echo "        '$ruleColumn' => '$rule',\n"; } ? >
     ];
+//*/ ?>
 
     /**
      * Rules used in different cases
@@ -119,6 +121,7 @@ class <?= $className ?> extends <?= '' . ltrim($generator->baseClass, '\\') . "\
         'deleting' => [
         ],
         'saving' => [
+<?php foreach ($rules as $ruleColumn => $rule) { echo "            '$ruleColumn' => '$rule',\n"; } ?>
         ]
     ];
 
